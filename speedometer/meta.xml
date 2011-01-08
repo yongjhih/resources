@@ -1,0 +1,11 @@
+<meta>
+	<info author="50p" name="Speed-o-meter" version="0.9.0" type="misc" />
+	<script src="speed_client.lua" type="client" />
+	<script src="speed_server.lua" />
+
+	<file src="images/speedometer_bg.png" />
+	<file src="images/green_dot.png" />
+	<file src="images/red_dot.png" />
+	<file src="images/black_dot.png" />
+	<file src="images/yellow_dot.png" />
+</meta>

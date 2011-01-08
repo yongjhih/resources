@@ -1,0 +1,56 @@
+<meta>
+	<settings>
+		<setting name="MaxZombies" value="[70]" /> <!--maximum allowed zombies -->
+		<setting name="StreamMethod" value="[1]" /> <!-- 1 to constantly stream zombies, 0 to only allow zombies to spawn via createZombie function, 2 to only allow spawning at set spawnpoints -->
+	</settings>
+	
+	<info author="Slothman" name="Zday script" version="2.6.0" type="script" description="Zombie Infestation script" edf:definition="edf/zombies.edf"/>/>
+	<script src="zombie_server.lua" />
+	<script src="zombie_client.lua" type="client"/>
+	<file src="zombiewood.png" />
+	<file src="skins/13.txd" />
+	<file src="skins/22.txd" />
+	<file src="skins/56.txd" />
+	<file src="skins/68.txd" />
+	<file src="skins/69.txd" />
+	<file src="skins/70.txd" />
+	<file src="skins/84.txd" />
+	<file src="skins/92.txd" />
+	<file src="skins/97.txd" />
+	<file src="skins/105.txd" />
+	<file src="skins/107.txd" />
+	<file src="skins/108.txd" />
+	<file src="skins/111.txd" />
+	<file src="skins/127.txd" />
+	<file src="skins/128.txd" />
+	<file src="skins/152.txd" />
+	<file src="skins/162.txd" />
+	<file src="skins/167.txd" />
+	<file src="skins/188.txd" />
+	<file src="skins/192.txd" />
+	<file src="skins/206.txd" />
+	<file src="skins/209.txd" />
+	<file src="skins/212.txd" />
+	<file src="skins/229.txd" />
+	<file src="skins/230.txd" />
+	<file src="skins/258.txd" />
+	<file src="skins/264.txd" />
+	<file src="skins/274.txd" />
+	<file src="skins/277.txd" />
+	<file src="skins/280.txd" />
+	<file src="skins/287.txd" />
+	<file src="sounds/mgroan1.ogg" />
+	<file src="sounds/mgroan2.ogg" />
+	<file src="sounds/mgroan3.ogg" />
+	<file src="sounds/mgroan4.ogg" />
+	<file src="sounds/mgroan5.ogg" />
+	<file src="sounds/mgroan6.ogg" />
+	<file src="sounds/mgroan7.ogg" />
+	<file src="sounds/mgroan8.ogg" />
+	<file src="sounds/mgroan9.ogg" />
+	<file src="sounds/mgroan10.ogg" />
+	<file src="edf/zombiespawn.png" />
+	<include resource="scoreboard" />
+	<export function="createZombie" type="server"/>
+	<export function="isPedZombie" type="server"/>
+</meta>
