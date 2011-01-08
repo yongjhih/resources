@@ -51,7 +51,7 @@ function Zomb_chase (ped, Zx, Zy, Zz )
 						local action = math.random( 1, 2 )
 						if action == 1 then
 							setPedAnimation ( ped )
-							--setPedAnimation ( ped, "FIGHT_D", "FightD_M", -1, true, true, true)
+							--setPedAnimation ( ped, "FIGHT_D", "FightD_M", -1, false, false, true)
 							triggerClientEvent ( "Zomb_Punch", getRootElement(), ped )
 							setTimer ( function (ped) if ( isElement ( ped ) ) then setPedAnimation ( ped, "ped", "run_old", -1, true, true, true ) end end, 800, 1, ped )
 							setTimer ( Zomb_chase, 2000, 1, ped, x, y, z )
@@ -300,11 +300,26 @@ end
 --ADJUSTS PLAYERS ZOMBIE KILL SCORE
 function deanimated( ammo, attacker, weapon, bodypart )
 	if (attacker) then
-		if (getElementType ( attacker ) == "player") and (getElementType ( source ) == "ped") then
-			if (getElementData (source, "zombie") == true) then
-				local oldZcount = getElementData ( attacker, "Zombie kills" )
-				setElementData ( attacker, "Zombie kills", oldZcount+1  )
-				triggerEvent ( "onZombieWasted", source, attacker, weapon, bodypart )
+		local attackerType = getElementType(attacker)
+
+		if (getElementData (source, "zombie") == true) then
+			local owner = attacker
+
+			if (getElementType ( source ) == "ped") then
+				if (attackerType == "player") then
+					owner = attacker
+					local oldZcount = getElementData ( owner, "Zombie kills" )
+
+					setElementData ( owner, "Zombie kills", oldZcount+1  )
+					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
+				elseif (attackerType == "vehicle") and (getElementType ( source ) == "ped") then
+					owner = getVehicleController(attacker)
+					local oldZcount = getElementData ( owner, "Zombie kills" )
+
+					setElementData ( owner, "Zombie kills", oldZcount+1  )
+					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
+				end
+
 			end
 		end
 	end
