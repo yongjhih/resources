@@ -300,9 +300,9 @@ end
 --ADJUSTS PLAYERS ZOMBIE KILL SCORE
 function deanimated( ammo, attacker, weapon, bodypart )
 	if (attacker) then
-		local attackerType = getElementType(attacker)
-
 		if (getElementData (source, "zombie") == true) and (getElementType ( source ) == "ped") then
+				local attackerType = getElementType(attacker)
+
 			if (attackerType == "player") then
 				local owner = attacker
 				local oldZcount = getElementData ( owner, "Zombie kills" )
