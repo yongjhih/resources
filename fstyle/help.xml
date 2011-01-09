@@ -1,0 +1,23 @@
+<help popup="yes">
+Fighting Style`s
+
+    * 4: STYLE STANDARD
+    * 5: STYLE BOXING
+    * 6: STYLE KUNG FU
+    * 7: STYLE KiCK BOXING
+    * 8: STYLE WEAPON
+    * 9: STYLE WEAPON
+    * 10:STYLE WEAPON
+    * 11:STYLE WEAPON
+    * 12:STYLE WEAPON
+    * 13:STYLE WEAPON
+    * 14:STYLE WEAPON
+    * 15: STYLE_GRAB KICK
+    * 16: STYLE ELBOWS 
+ 
+ to change you fighting style use: /setstyle id
+ to show you fighting style use: /style
+ 
+ By DanieloX thx to mta wiki.
+
+</help>
