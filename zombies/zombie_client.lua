@@ -2,6 +2,8 @@ myZombies = { }
 --helmetzombies = { 27, 51, 52, 99, 27, 137, 153, 167, 205, 260, 277, 278, 279, 284, 285 }
 helmetzombies = { 264,277,287 }
 resourceRoot = getResourceRootElement()
+ComboKillCount = 0
+ComboKillReset = 0
 
 --FORCES ZOMBIES TO MOVE ALONG AFTER THEIR TARGET PLAYER DIES
 function playerdead ()
@@ -492,5 +494,22 @@ function createText ( )
 	local dcount = tostring(table.getn( myZombies ))
 	dxDrawText( dcount, screenWidth-40, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 	dxDrawText( dcount, screenWidth-42, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
+	local StrComboKillCount = tostring(ComboKillCount)
+	dxDrawText( StrComboKillCount, screenWidth-160, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
+	dxDrawText( StrComboKillCount, screenWidth-168, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
 end
 addEventHandler("onClientRender",getRootElement(), createText)
+
+addEvent( "onZombieWasted", true )
+function comboKill ( ammo, attacker, weapon, bodypart )
+	ComboKillCount = ComboKillCount+1
+	setTimer( initializeComboKill, 3000, 1)
+	ComboKillReset = ComboKillCount
+end
+addEventHandler("onZombieWasted", getRootElement(), comboKill )
+
+function initializeComboKill( )
+	ComboKillCount = ComboKillReset
+	ComboKillReset = 0
+end
+

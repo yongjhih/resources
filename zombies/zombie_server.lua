@@ -309,12 +309,14 @@ function deanimated( ammo, attacker, weapon, bodypart )
 
 				setElementData ( owner, "Zombie kills", oldZcount+1  )
 				triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
+				triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )
 			elseif (attackerType == "vehicle") then
 				local owner = getVehicleController(attacker)
 				local oldZcount = getElementData ( owner, "Zombie kills" )
 
 				setElementData ( owner, "Zombie kills", oldZcount+1  )
 				triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
+				triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )
 			end
 		end
 	end
