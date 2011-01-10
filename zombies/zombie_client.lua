@@ -503,13 +503,15 @@ addEventHandler("onClientRender",getRootElement(), createText)
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
 	ComboKillCount = ComboKillCount+1
-	setTimer( initializeComboKill, 3000, 1)
+	triggerEvent ( "onClientRender", createText )
 	ComboKillReset = ComboKillCount
+	setTimer( initializeComboKill, 3000, 1)
 end
 addEventHandler("onZombieWasted", getRootElement(), comboKill )
 
 function initializeComboKill( )
 	ComboKillCount = ComboKillReset
 	ComboKillReset = 0
+	triggerEvent ( "onClientRender", createText )
 end
 
