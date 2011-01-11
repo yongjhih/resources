@@ -1,11 +1,11 @@
 addEvent ("onClientPlayerKillMessage",true)
-function onClientPlayerKillMessage ( killer,weapon,wr,wg,wb,kr,kg,kb,width,resource )
+function onClientPlayerKillMessage ( killer,weapon,wr,wg,wb,kr,kg,kb,width,resource,bodypart )
 	if wasEventCancelled() then return end
-	outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource )
+	outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
 end
 addEventHandler ("onClientPlayerKillMessage",getRootElement(),onClientPlayerKillMessage)
 
-function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource )
+function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
 	if not iconWidths[weapon] then 
 		if type(weapon) ~= "string" then
 			weapon = 999 
@@ -50,6 +50,6 @@ function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 		killerName = ""
 	end
 	return outputMessage ( {killerName, {"padding",width=3}, {"icon",id=weapon},
-		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName},
+		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..getBodyPartName(bodypart)..")"},
 		kr,kg,kb )
 end

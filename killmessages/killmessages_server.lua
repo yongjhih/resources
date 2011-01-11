@@ -93,7 +93,7 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 	if ( usedVehicle ) then
 		weapon = usedVehicle
 	end
-	outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon )
+	outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
 	--
 	local extra = ""
 	if ( usedVehicle ) then
@@ -103,20 +103,20 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 		if suicide then
 			local weaponName = getWeaponNameFromID ( weapon )
 			if weaponName then
-				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself. ("..weaponName..")" )
+				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself. ("..weaponName..") -"..getBodyPartName(bodypart) )
 			else
-				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself."..extra )
+				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself."..extra.." -"..getBodyPartName(bodypart) )
 			end
 		else
 			local weaponName = getWeaponNameFromID ( weapon )
 			if weaponName then
-				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". ("..weaponName..")" )
+				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". ("..weaponName..") -"..getBodyPartName(bodypart) )
 			else
-				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source).."."..extra )
+				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". "..extra.." -"..getBodyPartName(bodypart) )
 			end
 		end
 	else
-		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra )
+		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra.." -"..getBodyPartName(bodypart))
 	end
 	--
 end
@@ -125,7 +125,7 @@ function outputConsoleKillMessage ( text )
 	outputConsole ( text )
 end
 
-function outputKillMessage ( killed, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource )
+function outputKillMessage ( killed, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
 	if ( resource ) then resource = getResourceName(resource) end
 	if not isElement(killed) then
 		outputDebugString ( "outputKillMessage - Invalid 'wasted' player specified",0,0,0,100)
@@ -135,7 +135,7 @@ function outputKillMessage ( killed, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 		outputDebugString ( "outputKillMessage - Invalid 'wasted' player specified",0,0,0,100)
 		return false
 	end
-	return triggerClientEvent(getRootElement(),"onClientPlayerKillMessage",killed,killer,weapon,wr,wg,wb,kr,kg,kb,width,resource )
+	return triggerClientEvent(getRootElement(),"onClientPlayerKillMessage",killed,killer,weapon,wr,wg,wb,kr,kg,kb,width,resource,bodypart )
 end
 
 function outputMessage ( message, visibleTo, r, g, b, font )
