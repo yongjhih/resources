@@ -44,16 +44,19 @@ function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 				killerName = getPlayerName ( killer )
 			else 
 				outputDebugString ( "outputKillMessage - Invalid 'killer' player specified",0,0,0,100)
-			return outputMessage ( {"", {"padding",width=3}, {"icon",id=weapon}, {"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"}, kr,kg,kb ) end
+				return outputMessage ( {"", {"padding",width=3}, {"icon",id=weapon}, {"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"}, kr,kg,kb )
+			end
 		elseif type(killer) == "string" then
 			killerName = killer
 		else
-			killerName = ""
+			killerName = "1"
 		end
-	else killerName = "" end
+	else 
+		killerName = "2"
+	end
 	--create the new text
 	if not killerName then
-		killerName = ""
+		killerName = "3"
 	end
 	return outputMessage ( {killerName, {"padding",width=3}, {"icon",id=weapon},
 		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"},

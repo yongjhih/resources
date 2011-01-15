@@ -71,7 +71,11 @@ function KillMessages_onPlayerWasted ( totalammo, killer, killerweapon, bodypart
 		local triggered = triggerEvent ( "onPlayerKillMessage", getRandomPlayer(),false,killerweapon,bodypart )
 		--outputDebugString ( "Cancelled: "..tostring(triggered) )
 		if ( triggered ) then
-			eventTriggered ( source,false,killerweapon,bodypart,false,usedVehicle)
+			if getElementType ( killer ) == "ped" and (getElementData (killer, "zombie") == true) then
+				eventTriggered ( source,killer,killerweapon,bodypart,false,usedVehicle)
+			else
+				eventTriggered ( source,false,killerweapon,bodypart,false,usedVehicle)
+			end
 		end
 	end
 end
@@ -84,7 +88,7 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 		wr,wg,wb = getTeamColor ( getPlayerTeam ( source ) )
 	end
 	local kr,kg,kb = false,false,false
-	if ( killer ) then
+	if ( killer and getElementType ( killer ) == "player" ) then
 		kr,kg,kb = getPlayerNametagColor	( killer )
 		if getPlayerTeam ( source ) then
 			kr,kg,kb = getTeamColor ( getPlayerTeam ( killer ) )
@@ -93,7 +97,11 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 	if ( usedVehicle ) then
 		weapon = usedVehicle
 	end
-	outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
+	if getElementType ( killer ) == "ped" and (getElementData (killer, "zombie") == true) then
+		outputKillMessage ( source, wr,wg,wb,"Zombie",255,0,0,weapon,width,resource,bodypart )
+	else
+		outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
+	end
 	--
 	local extra = ""
 	if ( usedVehicle ) then
@@ -105,7 +113,7 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 	else
 		bodypartName = "unknown"
 	end
-	if ( killer ) then
+	if ( killer and getElementType ( killer ) == "player" ) then
 		if suicide then
 			local weaponName = getWeaponNameFromID ( weapon )
 			if weaponName then
@@ -121,6 +129,8 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". "..extra.." -"..bodypartName )
 			end
 		end
+	elseif getElementType ( killer ) == "ped" and (getElementData (killer, "zombie") == true) then
+		outputConsoleKillMessage ( "* Zombie killed "..getPlayerName(source)..". "..extra.." -"..bodypartName )
 	else
 		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra.." -"..bodypartName )
 	end
