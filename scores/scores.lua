@@ -79,7 +79,7 @@ addEventHandler("onPlayerJoin", root,
 
 addEventHandler("onPlayerWasted", root,
 	function (ammo, killer, weapon)
-		if killer then
+		if killer and getElementType ( killer ) ~= "ped" and (getElementData (killer, "zombie") ~= true) then
 			if killer ~= source then
 				-- killer killed victim
 				setScoreData(killer, "kills", getElementData(killer, "kills") + 1)
