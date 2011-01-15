@@ -3,7 +3,8 @@ myZombies = { }
 helmetzombies = { 264,277,287 }
 resourceRoot = getResourceRootElement()
 ComboKillCount = 0
-ComboKillReset = 0
+ComboKillTimer = 3
+myCombokill = { }
 
 --FORCES ZOMBIES TO MOVE ALONG AFTER THEIR TARGET PLAYER DIES
 function playerdead ()
@@ -236,6 +237,7 @@ function clientsetup()
 	engineImportTXD ( skin, 280 )
 	local skin = engineLoadTXD ( "skins/287.txd" ) --torn army by Deixell
 	engineImportTXD ( skin, 287 )
+	setTimer( initializeComboKill, 1000, 0)
 end
 
 --UPDATES PLAYERS COUNT OF AGGRESIVE ZOMBIES
@@ -504,14 +506,15 @@ addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
 	ComboKillCount = ComboKillCount+1
 	triggerEvent ( "onClientRender", createText )
-	ComboKillReset = ComboKillCount
-	setTimer( initializeComboKill, 3000, 1)
+	ComboKillTimer = 0
 end
 addEventHandler("onZombieWasted", getRootElement(), comboKill )
 
 function initializeComboKill( )
-	ComboKillCount = ComboKillReset
-	ComboKillReset = 0
+	ComboKillTimer = ComboKillTimer+1
+	if (ComboKillTimer > 3) then
+		ComboKillCount = 0
+	end
 	triggerEvent ( "onClientRender", createText )
 end
 
