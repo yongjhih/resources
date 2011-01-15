@@ -32,13 +32,19 @@ function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 	else 
 		outputDebugString ( "outputKillMessage - Invalid 'wasted' player specified",0,0,0,100)
 	return false end
+	local bodypartName
+	if bodypart then
+		bodypartName = getBodyPartName(bodypart)
+	else
+		bodypartName = "unknown"
+	end
 	if ( killer ) then
 		if isElement ( killer ) then
 			if getElementType ( killer ) == "player" then
 				killerName = getPlayerName ( killer )
 			else 
 				outputDebugString ( "outputKillMessage - Invalid 'killer' player specified",0,0,0,100)
-			return false end
+			return outputMessage ( {"", {"padding",width=3}, {"icon",id=weapon}, {"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"}, kr,kg,kb ) end
 		elseif type(killer) == "string" then
 			killerName = killer
 		else
@@ -50,6 +56,6 @@ function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 		killerName = ""
 	end
 	return outputMessage ( {killerName, {"padding",width=3}, {"icon",id=weapon},
-		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..getBodyPartName(bodypart)..")"},
+		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"},
 		kr,kg,kb )
 end

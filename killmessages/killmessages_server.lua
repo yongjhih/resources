@@ -99,24 +99,30 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 	if ( usedVehicle ) then
 	extra = " (Vehicle)"
 	end
+	local bodypartName
+	if bodypart then
+		bodypartName = getBodyPartName(bodypart)
+	else
+		bodypartName = "unknown"
+	end
 	if ( killer ) then
 		if suicide then
 			local weaponName = getWeaponNameFromID ( weapon )
 			if weaponName then
-				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself. ("..weaponName..") -"..getBodyPartName(bodypart) )
+				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself. ("..weaponName..") -"..bodypartName )
 			else
-				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself."..extra.." -"..getBodyPartName(bodypart) )
+				outputConsoleKillMessage ( "* "..getPlayerName(source).." killed himself."..extra.." -"..bodypartName )
 			end
 		else
 			local weaponName = getWeaponNameFromID ( weapon )
 			if weaponName then
-				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". ("..weaponName..") -"..getBodyPartName(bodypart) )
+				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". ("..weaponName..") -"..bodypartName )
 			else
-				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". "..extra.." -"..getBodyPartName(bodypart) )
+				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". "..extra.." -"..bodypartName )
 			end
 		end
 	else
-		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra.." -"..getBodyPartName(bodypart))
+		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra.." -"..bodypartName )
 	end
 	--
 end
