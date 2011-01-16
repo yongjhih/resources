@@ -36,134 +36,117 @@ addEventHandler ( "onClientPedWasted", getRootElement(), pedkilled )
 
 --THIS CHECKS ALL ZOMBIES EVERY SECOND TO SEE IF THEY ARE IN SIGHT
 function zombie_check ()
-	if (getElementData (getLocalPlayer (), "zombie") ~= true) then
-		local zombies = getElementsByType ( "ped" )
+	if (getElementData (getLocalPlayer (), "zombie") ~= true) and ( isPlayerDead ( getLocalPlayer () ) == false ) then
+		local zombies = getElementsByType ( "ped",getRootElement(),true )
 		local Px,Py,Pz = getElementPosition( getLocalPlayer () )
 		if isPedDucked ( getLocalPlayer ()) then
 			local Pz = Pz-1
 		end		
 		for theKey,theZomb in ipairs(zombies) do
 			if (isElement(theZomb)) then
-				if (getElementData (theZomb, "zombie") == true) then
-					if ( getElementData ( theZomb, "status" ) == "idle" ) then --CHECKS IF AN IDLE ZOMBIE IS IN SIGHT
-						local Zx,Zy,Zz = getElementPosition( theZomb )
-						local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false ) 
-						local distance = (getDistanceBetweenPoints3D (Px, Py, Pz, Zx, Zy, Zz))
-						if (isclear == true) and (distance < 45) and ( isPlayerDead ( getLocalPlayer () ) == false ) then
-							isthere = "no"
-							for k, ped in pairs( myZombies ) do
-								if ped == theZomb then
-									isthere = "yes"
-								end
-							end
-							if isthere == "no" then
+				local Zx,Zy,Zz = getElementPosition( theZomb )
+				if (getDistanceBetweenPoints3D(Px, Py, Pz, Zx, Zy, Zz) < 45 ) then
+					if (getElementData (theZomb, "zombie") == true) then
+						if ( getElementData ( theZomb, "status" ) == "idle" ) then --CHECKS IF AN IDLE ZOMBIE IS IN SIGHT
+							local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, Bodyfence ) 
+							if (isclear == true) then
 								setElementData ( theZomb, "status", "chasing" )
-								setElementData ( theZomb, "target", getLocalPlayer () )
+								setElementData ( theZomb, "target", getLocalPlayer() )
 								table.insert( myZombies, theZomb ) --ADDS ZOMBIE TO PLAYERS COLLECTION
+								table.remove( zombies, theKey)
 								zombieradiusalert (theZomb)
 							end
-						end
-					elseif (getElementData(theZomb,"status") == "chasing") and (getElementData(theZomb,"target") == nil) then --CHECKS IF AN AGGRESSIVE LOST ZOMBIE IS IN SIGHT
-						local Zx,Zy,Zz = getElementPosition( theZomb )
-						local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false) 
-						local distance = (getDistanceBetweenPoints3D (Px, Py, Pz, Zx, Zy, Zz))
-						if (isclear == true) and (distance < 45) and ( isPlayerDead ( getLocalPlayer () ) == false ) then
-							setElementData ( theZomb, "target", getLocalPlayer () )
-							isthere = "no"
-							for k, ped in pairs( myZombies ) do
-								if ped == theZomb then
-									isthere = "yes"
+						elseif (getElementData(theZomb,"status") == "chasing") and (getElementData(theZomb,"target") == nil) then --CHECKS IF AN AGGRESSIVE LOST ZOMBIE IS IN SIGHT
+							local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, Bodyfence) 
+							if (isclear == true) then
+								setElementData ( theZomb, "target", getLocalPlayer() )
+								isthere = "no"
+								for k, ped in pairs( myZombies ) do
+									if ped == theZomb then
+										isthere = "yes"
+									end
+								end
+								if isthere == "no" then
+									table.insert( myZombies, theZomb ) --ADDS THE WAYWARD ZOMBIE TO THE PLAYERS COLLECTION
+									table.remove( zombies, theKey)
 								end
 							end
-							if isthere == "no" then
-								table.insert( myZombies, theZomb ) --ADDS THE WAYWARD ZOMBIE TO THE PLAYERS COLLECTION
+						elseif ( getElementData ( theZomb, "target" ) == getLocalPlayer() ) then --CHECKS IF AN ALREADY AGGRESSIVE ZOMBIE IS IN SIGHT
+							local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, Bodyfence) 
+							if (isclear == false) then --IF YOUR ZOMBIE LOST YOU, MAKES IT REMEMBER YOUR LAST COORDS
+								setElementData ( theZomb, "target", nil )
+								triggerServerEvent ("onZombieLostPlayer", theZomb, oldPx, oldPy, oldPz)
 							end
-						end
-					elseif ( getElementData ( theZomb, "target" ) == getLocalPlayer () ) then --CHECKS IF AN ALREADY AGGRESSIVE ZOMBIE IS IN SIGHT
-						local Zx,Zy,Zz = getElementPosition( theZomb )
-						local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false) 
-						local distance = (getDistanceBetweenPoints3D (Px, Py, Pz, Zx, Zy, Zz))
-						if (isclear == false) or (distance > 45) then --IF YOUR ZOMBIE LOST YOU, MAKES IT REMEMBER YOUR LAST COORDS
-							setElementData ( theZomb, "target", nil )
-							setElementData ( theZomb, "Tx", oldPx )
-							setElementData ( theZomb, "Ty", oldPy )
-							setElementData ( theZomb, "Tz", oldPz )
 						end
 					end
-				else
-					local thePed = theZomb
-					local pedzombies = getElementsByType ( "ped" )
-					local Ppx,Ppy,Ppz = getElementPosition(thePed)
-					for theKey,thePedZomb in ipairs(pedzombies) do
-						if (isElement(thePedZomb)) then
-							if (getElementData (thePedZomb, "zombie") == true) then
-								if ( getElementData ( thePedZomb, "status" ) == "idle" ) then --CHECKS IF AN IDLE ZOMBIE IS IN SIGHT
-									local Zx,Zy,Zz = getElementPosition( thePedZomb )
-									local isclear = isLineOfSightClear (Ppx, Ppy, Ppz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false ) 
-									local distance = (getDistanceBetweenPoints3D (Ppx, Ppy, Ppz, Zx, Zy, Zz))
-									if (isclear == true) and (distance < 45) and ( getElementHealth ( thePed) > 0) then
-										setElementData ( thePedZomb, "status", "chasing" )
-										setElementData ( thePedZomb, "target", theped )
-										setElementData ( thePedZomb, "Tx", Ppx )
-										setElementData ( thePedZomb, "Ty", Ppy )
-										setElementData ( thePedZomb, "Tz", Ppz )
-										zombieradiusalert (thePedZomb)
-									end
-								elseif ( getElementData ( thePedZomb, "status" ) == "chasing" ) and ( getElementData ( thePedZomb, "target" ) == nil) then --CHECKS IF AN AGGRESSIVE LOST ZOMBIE IS IN SIGHT OF THE PED
-									local Zx,Zy,Zz = getElementPosition( thePedZomb )
-									local isclear = isLineOfSightClear (Ppx, Ppy, Ppz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false) 
-									local distance = (getDistanceBetweenPoints3D (Ppx, Ppy, Ppz, Zx, Zy, Zz))
-									if (isclear == true) and (distance < 45) and ( getElementHealth ( thePed) > 0) then
-										setElementData ( thePedZomb, "target", thePed )
-										setElementData ( thePedZomb, "Tx", Ppx )
-										setElementData ( thePedZomb, "Ty", Ppy )
-										setElementData ( thePedZomb, "Tz", Ppz )
-									end
-								elseif ( getElementData ( thePedZomb, "target" ) == thePed ) then --CHECKS IF AN ALREADY AGGRESSIVE ZOMBIE IS IN SIGHT OF THE PED
-									local Zx,Zy,Zz = getElementPosition( thePedZomb )
-									local isclear = isLineOfSightClear (Ppx, Ppy, Ppz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, false) 
-									local distance = (getDistanceBetweenPoints3D (Ppx, Ppy, Ppz, Zx, Zy, Zz))
-									if (isclear == false) or (distance > 45) then --IF YOUR ZOMBIE LOST THE PED, MAKES IT REMEMBER the peds LAST COORDS
-										setElementData ( thePedZomb, "target", nil )
-										setElementData ( thePedZomb, "Tx", Ppx )
-										setElementData ( thePedZomb, "Ty", Ppy )
-										setElementData ( thePedZomb, "Tz", Ppz )
-									end
-								end		
-							end
-						end
-					end		
 				end
 			end
 		end
-		for k, ped in pairs( myZombies ) do
-			if (isElement(ped) == false) then
-				table.remove( myZombies, k)
+	--this second half is for checking peds and zombies
+	
+		local nonzombies = getElementsByType ( "ped",getRootElement(),true )
+		for theKey,theZomb in ipairs(zombies) do
+			if (isElement(theZomb)) then
+				if (getElementData (theZomb, "zombie") == true) then
+					local Zx,Zy,Zz = getElementPosition( theZomb )
+					for theKey,theNonZomb in ipairs(nonzombies) do
+						if (getElementData (theNonZomb, "zombie") ~= true) then -- if the ped isnt a zombie
+							local Px,Py,Pz = getElementPosition( theNonZomb )
+							if (getDistanceBetweenPoints3D(Px, Py, Pz, Zx, Zy, Zz) < 45 ) then
+								local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz +1, true, false, false, true, false, false, false, Bodyfence ) 
+								if (isclear == true) and ( getElementHealth ( theNonZomb ) > 0) then
+									if ( getElementData ( theZomb, "status" ) == "idle" ) then --CHECKS IF AN IDLE ZOMBIE IS IN SIGHT
+										triggerServerEvent ("onZombieLostPlayer", theZomb, Px, Py, Pz)									
+										setElementData ( theZomb, "status", "chasing" )
+										setElementData ( theZomb, "target", theNonZomb )
+										zombieradiusalert (theZomb)
+									elseif ( getElementData ( theZomb, "status" ) == "chasing" ) and ( getElementData ( theZomb, "target" ) == nil) then
+										triggerServerEvent ("onZombieLostPlayer", theZomb, Px, Py, Pz)
+										setElementData ( theZomb, "target", theNonZomb )									
+									end
+								end					
+							end		
+							if ( getElementData ( theZomb, "target" ) == theNonZomb ) then --CHECKS IF AN ALREADY AGGRESSIVE ZOMBIE IS IN SIGHT OF THE PED
+								local Px,Py,Pz = getElementPosition( theNonZomb )
+								if (getDistanceBetweenPoints3D(Px, Py, Pz, Zx, Zy, Zz) < 45 ) then
+									local isclear = isLineOfSightClear (Px, Py, Pz+1, Zx, Zy, Zz+1, true, false, false, true, false, false, false, Bodyfence) 
+									if (isclear == false) then --IF YOUR ZOMBIE LOST THE PED, MAKES IT REMEMBER the peds LAST COORDS
+										triggerServerEvent ("onZombieLostPlayer", theZomb, Px, Py, Pz)							
+										setElementData ( theZomb, "target", nil )
+									end
+								end
+							end
+						end
+					end
+				end
 			end
+		end
+	end
+	for k, ped in pairs( myZombies ) do
+		if (isElement(ped) == false) then
+			table.remove( myZombies, k)
 		end
 	end
 	oldPx,oldPy,oldPz = getElementPosition( getLocalPlayer () )
 end
 
+
 --INITAL SETUP
-function clientoutbreak()
-	MainClientTimer1 = setTimer ( zombie_check, 1000, 0)  --STARTS THE TIMER TO CHECK FOR ZOMBIES
-end
 
 function clientsetupstarter(startedresource)
 	if startedresource == getThisResource() then
 		setTimer ( clientsetup, 1234, 1)
+		MainClientTimer1 = setTimer ( zombie_check, 1000, 0)  --STARTS THE TIMER TO CHECK FOR ZOMBIES
 	end
-	setTimer ( clientoutbreak, 2222, 1)
 end
 addEventHandler("onClientResourceStart", getRootElement(), clientsetupstarter)
 
 function clientsetup()
 	oldPx,oldPy,oldPz = getElementPosition( getLocalPlayer () )
-	throatcol = createColSphere ( 0, 0, 0, .2)
-	setElementData ( getLocalPlayer(), "Zombie kills", 0 )	
+	throatcol = createColSphere ( 0, 0, 0, .3)
 	woodpic = guiCreateStaticImage( .65, .06, .1, .12, "zombiewood.png", true )
 	guiSetVisible ( woodpic, false )
+	Bodyfence = getElementData (getLocalPlayer(), "blocker")-- this is to make it compatible with fps scripts, disregard
 
 --ALL ZOMBIES STFU
 	local zombies = getElementsByType ( "ped" )
@@ -182,6 +165,8 @@ function clientsetup()
 	engineImportTXD ( skin, 22 )	
 	local skin = engineLoadTXD ( "skins/56.txd" ) --young and blue by Slothman
 	engineImportTXD ( skin, 56 )
+	local skin = engineLoadTXD ( "skins/67.txd" ) -- slit r* employee
+	engineImportTXD ( skin, 67 )
 	local skin = engineLoadTXD ( "skins/68.txd" ) -- shredded preist by Deixell
 	engineImportTXD ( skin, 68 )
 	local skin = engineLoadTXD ( "skins/69.txd" ) --bleedin eyes in denim by Capitanazop
@@ -202,6 +187,8 @@ function clientsetup()
 	engineImportTXD ( skin, 108 )
 	local skin = engineLoadTXD ( "skins/111.txd" ) --Frank West from dead rising (nonzombie) by Slothman
 	engineImportTXD ( skin, 111 )
+	local skin = engineLoadTXD ( "skins/126.txd" ) -- bullet ridden wiseguy by Slothman
+	engineImportTXD ( skin, 126 )
 	local skin = engineLoadTXD ( "skins/127.txd" ) --flyboy from dawn of the dead by Slothman
 	engineImportTXD ( skin, 127 )
 	local skin = engineLoadTXD ( "skins/128.txd" ) --holy native by Slothman
@@ -216,6 +203,8 @@ function clientsetup()
 	engineImportTXD ( skin, 188 )
 	local skin = engineLoadTXD ( "skins/192.txd" ) --Alice from resident evil (nonzombie) by Slothman
 	engineImportTXD ( skin, 192 )
+	local skin = engineLoadTXD ( "skins/195.txd" ) --bloody ex by Slothman
+	engineImportTXD ( skin, 195 )
 	local skin = engineLoadTXD ( "skins/206.txd" ) -- faceless zombie by Slothman
 	engineImportTXD ( skin, 206 )
 	local skin = engineLoadTXD ( "skins/209.txd" ) --Noodle vendor by 50p
@@ -238,7 +227,6 @@ function clientsetup()
 	engineImportTXD ( skin, 280 )
 	local skin = engineLoadTXD ( "skins/287.txd" ) --torn army by Deixell
 	engineImportTXD ( skin, 287 )
-	--setTimer( initializeComboKill, 1000, 0)
 end
 
 --UPDATES PLAYERS COUNT OF AGGRESIVE ZOMBIES
@@ -255,6 +243,8 @@ function ( dataName )
 				end
 			end
 		end
+	elseif getElementType ( source ) == "player" and dataName == "blocker" then
+		Bodyfence = getElementData (getLocalPlayer(), "blocker")
 	end
 end )
 
@@ -360,8 +350,13 @@ function hidewoodpic ( theElement, matchingDimension )
 end
 addEventHandler ( "onClientColShapeLeave", getRootElement(), hidewoodpic )
 
---ZOMBIES ATTACK FROM BEHIND STUFF
+--ZOMBIES ATTACK FROM BEHIND AND GUI STUFF
 function movethroatcol ()
+	local screenWidth, screenHeight = guiGetScreenSize()
+	local dcount = tostring(table.getn( myZombies )).." Zombies Hunting You"
+	dxDrawText( dcount, screenWidth-380, screenHeight -50, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )
+	dxDrawText( dcount, screenWidth-382, screenHeight -52, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" )
+	
 	if isElement(throatcol) then
 		local playerrot = getPedRotation ( getLocalPlayer () )
 		local radRot = math.rad ( playerrot )
@@ -414,7 +409,7 @@ function zombieradiusalert (theElement)
 						end
 						if isthere == "no" and (getElementData (getLocalPlayer (), "zombie") ~= true) then
 							if (getElementType ( theElement ) == "ped") then
-								local isclear = isLineOfSightClear (Px, Py, Pz, Zx, Zy, Zz, true, false, false, true, false, false, false, false) 
+								local isclear = isLineOfSightClear (Px, Py, Pz, Zx, Zy, Zz, true, false, false, true, false, false, false, Bodyfence) 
 								if (isclear == true) then
 									setElementData ( theZomb, "status", "chasing" )
 									setElementData ( theZomb, "target", getLocalPlayer () )
@@ -478,7 +473,6 @@ function choketheplayer ( theElement, matchingDimension )
 		end
     end
 end
-addEventHandler ( "onClientPlayerJoin", getRootElement(), choketheplayer )
 
 addEvent( "Spawn_Placement", true )
 function Spawn_Place(xcoord, ycoord)
@@ -490,24 +484,19 @@ function Spawn_Place(xcoord, ycoord)
 end
 addEventHandler("Spawn_Placement", getRootElement(), Spawn_Place)
 
-
-
 function createText ( )
 	local screenWidth, screenHeight = guiGetScreenSize()
-	local dcount = tostring(table.getn( myZombies ))
-	dxDrawText( dcount, screenWidth-40, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
-	dxDrawText( dcount, screenWidth-42, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
 	local StrComboKillCount = tostring(ComboKillCount).."Combo"
 	if ComboKillCount ~= 0 then
 		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 		if ComboKillCount < 20 then
-			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		elseif ComboKillCount < 50 then
-			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 255, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		elseif ComboKillCount < 100 then
-			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 0, 0, 255, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 0, 255, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		else
-			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		end
 	end
 end

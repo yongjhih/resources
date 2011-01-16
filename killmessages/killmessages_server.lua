@@ -97,7 +97,7 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 	if ( usedVehicle ) then
 		weapon = usedVehicle
 	end
-	if getElementType ( killer ) == "ped" and (getElementData (killer, "zombie") == true) then
+	if ((getElementType ( killer ) == "ped") and (getElementData (killer, "zombie") == true)) then
 		outputKillMessage ( source, wr,wg,wb,"Zombie",255,0,0,weapon,width,resource,bodypart )
 	else
 		outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resource,bodypart )
@@ -129,7 +129,7 @@ function eventTriggered ( source,killer,weapon,bodypart,suicide,usedVehicle )
 				outputConsoleKillMessage ( "* "..getPlayerName(killer).." killed "..getPlayerName(source)..". "..extra.." -"..bodypartName )
 			end
 		end
-	elseif getElementType ( killer ) == "ped" and (getElementData (killer, "zombie") == true) then
+	elseif ((getElementType ( killer ) == "ped") and (getElementData (killer, "zombie") == true)) then
 		outputConsoleKillMessage ( "* Zombie killed "..getPlayerName(source)..". "..extra.." -"..bodypartName )
 	else
 		outputConsoleKillMessage ( "* "..getPlayerName(source).." died."..extra.." -"..bodypartName )
