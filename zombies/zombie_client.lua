@@ -3,8 +3,9 @@ myZombies = { }
 helmetzombies = { 264,277,287 }
 resourceRoot = getResourceRootElement()
 ComboKillCount = 0
-ComboKillTimer = 3
-myCombokill = { }
+DIsplayComboAlpha = 0
+ComboKillTimer = nil
+DisplayComboTimer = nil
 
 --FORCES ZOMBIES TO MOVE ALONG AFTER THEIR TARGET PLAYER DIES
 function playerdead ()
@@ -237,7 +238,7 @@ function clientsetup()
 	engineImportTXD ( skin, 280 )
 	local skin = engineLoadTXD ( "skins/287.txd" ) --torn army by Deixell
 	engineImportTXD ( skin, 287 )
-	setTimer( initializeComboKill, 1000, 0)
+	--setTimer( initializeComboKill, 1000, 0)
 end
 
 --UPDATES PLAYERS COUNT OF AGGRESIVE ZOMBIES
@@ -496,25 +497,48 @@ function createText ( )
 	local dcount = tostring(table.getn( myZombies ))
 	dxDrawText( dcount, screenWidth-40, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 	dxDrawText( dcount, screenWidth-42, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
-	local StrComboKillCount = tostring(ComboKillCount)
-	dxDrawText( StrComboKillCount, screenWidth-160, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
-	dxDrawText( StrComboKillCount, screenWidth-168, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
+	local StrComboKillCount = tostring(ComboKillCount).." Combo"
+	if ComboKillCount ~= 0 then
+		if ComboKillCount < 20 then
+			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		elseif ComboKillCount < 50 then
+			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 255, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		elseif ComboKillCount < 100 then
+			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 0, 0, 255, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		else
+			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		end
+		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
+	end
 end
 addEventHandler("onClientRender",getRootElement(), createText)
 
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
-	ComboKillCount = ComboKillCount+1
+	if ComboKillTimer ~= nil then
+		killTimer(ComboKillTimer)
+		ComboKillTimer = nil
+	end
+	if DisplayComboTimer ~= nil then
+		killTimer(DisplayComboTimer)
+		DisplayComboTimer = nil
+	end
+	ComboKillCount = ComboKillCount + 1
+	DIsplayComboAlpha = 255
 	triggerEvent ( "onClientRender", createText )
-	ComboKillTimer = 0
+	
+	DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
+	ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 end
 addEventHandler("onZombieWasted", getRootElement(), comboKill )
 
 function initializeComboKill( )
-	ComboKillTimer = ComboKillTimer+1
-	if (ComboKillTimer > 3) then
-		ComboKillCount = 0
-	end
+	ComboKillCount = 0
 	triggerEvent ( "onClientRender", createText )
 end
 
+function inDisplayComboKill( )
+	remaining, executesRemaining, totalExecutes = getTimerDetails(DisplayComboTimer)
+	DIsplayComboAlpha = (executesRemaining - 1)*28
+	triggerEvent ( "onClientRender", createText )
+end
