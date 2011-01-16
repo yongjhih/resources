@@ -497,8 +497,9 @@ function createText ( )
 	local dcount = tostring(table.getn( myZombies ))
 	dxDrawText( dcount, screenWidth-40, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, 255 ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 	dxDrawText( dcount, screenWidth-42, 3, screenWidth, screenHeight, tocolor ( 255, 255, 255, 255 ), 1.4, "pricedown" ) -- Draw Zone Name text.
-	local StrComboKillCount = tostring(ComboKillCount).." Combo"
+	local StrComboKillCount = tostring(ComboKillCount).."Combo"
 	if ComboKillCount ~= 0 then
+		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 		if ComboKillCount < 20 then
 			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		elseif ComboKillCount < 50 then
@@ -508,7 +509,6 @@ function createText ( )
 		else
 			dxDrawText( StrComboKillCount, screenWidth-208, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
 		end
-		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
 	end
 end
 addEventHandler("onClientRender",getRootElement(), createText)
