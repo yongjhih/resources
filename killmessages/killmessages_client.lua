@@ -49,14 +49,14 @@ function outputKillMessage ( source, wr,wg,wb,killer,kr,kg,kb,weapon,width,resou
 		elseif type(killer) == "string" then
 			killerName = killer
 		else
-			killerName = "1"
+			killerName = ""
 		end
 	else 
-		killerName = "2"
+		killerName = ""
 	end
 	--create the new text
 	if not killerName then
-		killerName = "3"
+		killerName = ""
 	end
 	return outputMessage ( {killerName, {"padding",width=3}, {"icon",id=weapon},
 		{"padding",width=3},{"color",r=wr,g=wg,b=wb}, wastedName, " ("..bodypartName..")"},
