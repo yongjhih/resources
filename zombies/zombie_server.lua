@@ -367,13 +367,15 @@ addEventHandler( "playereaten", getRootElement(), Playerinfected )
 
 --CHECKS FOR ZOMBIE GRABBING FROM BEHIND
 function Playerthroatbitten ( player, attacker)
-	local Zx, Zy, Zz = getElementPosition( attacker )
-	local Px, Py, Pz = getElementPosition( player )
-	local distance = (getDistanceBetweenPoints3D( Px, Py, Pz, Zx, Zy, Zz ))
-	if (distance < 1) then
-		killPed ( player, attacker, weapon, bodypart )
-	else
-		setPedAnimation (player)
+	if (attacker ~= nil) then
+		local Zx, Zy, Zz = getElementPosition( attacker )
+		local Px, Py, Pz = getElementPosition( player )
+		local distance = (getDistanceBetweenPoints3D( Px, Py, Pz, Zx, Zy, Zz ))
+		if ((distance ~= false) and (distance < 1)) then
+			killPed ( player, attacker, weapon, bodypart )
+		else
+			setPedAnimation (player)
+		end
 	end
 end
 
