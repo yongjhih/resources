@@ -504,7 +504,7 @@ addEventHandler("onClientRender",getRootElement(), createText)
 
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
-	if (getLocalPlayer() == attacter) then
+	if (getLocalPlayer() == attacker) then
 		if ComboKillTimer ~= nil then
 			killTimer(ComboKillTimer)
 			ComboKillTimer = nil
