@@ -392,12 +392,10 @@ function deanimated( ammo, attacker, weapon, bodypart )
 				if oldZcount ~= false then
 					setElementData ( owner, "Zombie kills", oldZcount+1  )
 					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
-					triggerClientEvent ( "onZombieCombo", owner, weapon, bodypart )
-				else
+					triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )				else
 					setElementData ( owner, "Zombie kills", 1  )
 					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )				
-					triggerClientEvent ( "onZombieCombo", owner, weapon, bodypart )
-				end
+					triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )				end
 			end
 		end
 	end
