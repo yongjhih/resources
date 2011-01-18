@@ -367,6 +367,20 @@ function movethroatcol ()
 		local tz = pz
 		setElementPosition ( throatcol, tx, ty, tz )
 	end
+
+	local StrComboKillCount = tostring(ComboKillCount).."Combo"
+	if ComboKillCount ~= 0 then
+		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
+		if ComboKillCount < 20 then
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		elseif ComboKillCount < 50 then
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		elseif ComboKillCount < 100 then
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 0, 255, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		else
+			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
+		end
+	end
 end
 addEventHandler ( "onClientRender", getRootElement(), movethroatcol )
 
@@ -484,52 +498,37 @@ function Spawn_Place(xcoord, ycoord)
 end
 addEventHandler("Spawn_Placement", getRootElement(), Spawn_Place)
 
-function createText ()
-	local screenWidth, screenHeight = guiGetScreenSize()
-	local StrComboKillCount = tostring(ComboKillCount).."Combo"
-	if ComboKillCount ~= 0 then
-		dxDrawText( StrComboKillCount, screenWidth-200, 1, screenWidth, screenHeight, tocolor ( 0, 0, 0, DIsplayComboAlpha ), 1.44, "pricedown" )    -- Draw Zone Name text shadow.
-		if ComboKillCount < 20 then
-			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
-		elseif ComboKillCount < 50 then
-			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 255, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
-		elseif ComboKillCount < 100 then
-			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 0, 0, 255, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
-		else
-			dxDrawText( StrComboKillCount, screenWidth-202, 3, screenWidth, screenHeight, tocolor ( 255, 0, 0, DIsplayComboAlpha ), 1.4, "pricedown" ) -- Draw Zone Name text.
-		end
-	end
-end
-addEventHandler("onClientRender",getRootElement(), createText)
-
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
-	if (getLocalPlayer() == attacker) then
-		if ComboKillTimer ~= nil then
-			killTimer(ComboKillTimer)
-			ComboKillTimer = nil
+	if (getLocalPlayer()) then
+		if (getLocalPlayer() == attacker) then
+			if ComboKillTimer ~= nil then
+				killTimer(ComboKillTimer)
+				ComboKillTimer = nil
+			end
+			if DisplayComboTimer ~= nil then
+				killTimer(DisplayComboTimer)
+				DisplayComboTimer = nil
+			end
+			ComboKillCount = ComboKillCount + 1
+			DIsplayComboAlpha = 255
+			triggerEvent ( "onClientRender", createText )
+			
+			DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
+			ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 		end
-		if DisplayComboTimer ~= nil then
-			killTimer(DisplayComboTimer)
-			DisplayComboTimer = nil
-		end
-		ComboKillCount = ComboKillCount + 1
-		DIsplayComboAlpha = 255
-		triggerEvent ( "onClientRender", createText )
-		
-		DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
-		ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 	end
 end
 addEventHandler("onZombieWasted", getRootElement(), comboKill )
 
 function initializeComboKill( )
 	ComboKillCount = 0
-	triggerEvent ( "onClientRender", createText )
+	triggerEvent ( "onClientRender", movethroatcol )
 end
 
 function inDisplayComboKill( )
 	remaining, executesRemaining, totalExecutes = getTimerDetails(DisplayComboTimer)
 	DIsplayComboAlpha = (executesRemaining - 1)*28
-	triggerEvent ( "onClientRender", createText )
+	triggerEvent ( "onClientRender", movethroatcol )
 end
+
