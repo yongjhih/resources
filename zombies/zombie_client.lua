@@ -367,20 +367,6 @@ function movethroatcol ()
 		local tz = pz
 		setElementPosition ( throatcol, tx, ty, tz )
 	end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end
 addEventHandler ( "onClientRender", getRootElement(), movethroatcol )
 
