@@ -501,6 +501,7 @@ function createText ()
 	end
 end
 addEventHandler("onClientRender",getRootElement(), createText)
+
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
 	local localPlayer = getLocalPlayer()
@@ -525,8 +526,6 @@ function comboKill ( ammo, attacker, weapon, bodypart )
 	end
 end
 addEventHandler("onZombieCombo", getLocalPlayer(), comboKill )
-
-
 
 function initializeComboKill( )
 	ComboKillCount = 0
