@@ -484,7 +484,7 @@ function Spawn_Place(xcoord, ycoord)
 end
 addEventHandler("Spawn_Placement", getRootElement(), Spawn_Place)
 
-function createText ( )
+function createText ()
 	local screenWidth, screenHeight = guiGetScreenSize()
 	local StrComboKillCount = tostring(ComboKillCount).."Combo"
 	if ComboKillCount ~= 0 then
@@ -504,7 +504,7 @@ addEventHandler("onClientRender",getRootElement(), createText)
 
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
-	if (getLocalPlayer() == attacter)
+	if (getLocalPlayer() == attacter) then
 		if ComboKillTimer ~= nil then
 			killTimer(ComboKillTimer)
 			ComboKillTimer = nil
