@@ -502,9 +502,9 @@ function createText ()
 end
 addEventHandler("onClientRender",getRootElement(), createText)
 
-addEvent( "onZombieWasted", true )
-function comboKill ( ammo, attacker, weapon, bodypart )
-	if (getLocalPlayer() == attacker) then
+addEvent( "onZombieCombo", true )
+function comboKill ( attacker, weapon, bodypart )
+--outputChatBox("getRootElement = "..getRootElement(), root, r, g, b)
 		if ComboKillTimer ~= nil then
 			killTimer(ComboKillTimer)
 			ComboKillTimer = nil
@@ -516,12 +516,12 @@ function comboKill ( ammo, attacker, weapon, bodypart )
 		ComboKillCount = ComboKillCount + 1
 		DIsplayComboAlpha = 255
 		triggerEvent ( "onClientRender", createText )
-		
 		DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
 		ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
-	end
 end
-addEventHandler("onZombieWasted", getRootElement(), comboKill )
+addEventHandler("onZombieCombo", getLocalPlayer(), comboKill )
+
+
 
 function initializeComboKill( )
 	ComboKillCount = 0
