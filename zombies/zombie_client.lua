@@ -500,23 +500,25 @@ addEventHandler("Spawn_Placement", getRootElement(), Spawn_Place)
 
 addEvent( "onZombieWasted", true )
 function comboKill ( ammo, attacker, weapon, bodypart )
-	if (getLocalPlayer()) then
-		if (getLocalPlayer() == attacker) then
-			if ComboKillTimer ~= nil then
-				killTimer(ComboKillTimer)
-				ComboKillTimer = nil
-			end
-			if DisplayComboTimer ~= nil then
-				killTimer(DisplayComboTimer)
-				DisplayComboTimer = nil
-			end
-			ComboKillCount = ComboKillCount + 1
-			DIsplayComboAlpha = 255
-			triggerEvent ( "onClientRender", createText )
-			
-			DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
-			ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
+	local localPlayer = getLocalPlayer()
+
+	if (localPlayer == attacker) then
+		if ComboKillTimer ~= nil then
+			killTimer(ComboKillTimer)
+			ComboKillTimer = nil
 		end
+
+		if DisplayComboTimer ~= nil then
+			killTimer(DisplayComboTimer)
+			DisplayComboTimer = nil
+		end
+
+		ComboKillCount = ComboKillCount + 1
+		DIsplayComboAlpha = 255
+		triggerEvent ( "onClientRender", createText )
+		
+		DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
+		ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 	end
 end
 addEventHandler("onZombieWasted", getRootElement(), comboKill )
