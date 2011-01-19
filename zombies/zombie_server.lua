@@ -21,6 +21,10 @@ end
 resourceRoot = getResourceRootElement()
 moancount =0
 moanlimit = 10
+ComboTeamKillCount = 0
+DIsplayComboTeamAlpha = 0
+DisplayComboTeamTimer = nil
+ComboTeamKillTimer = nil
 everyZombie = { }
 
 --IDLE BEHAVIOUR OF A ZOMBIE
@@ -392,15 +396,51 @@ function deanimated( ammo, attacker, weapon, bodypart )
 				if oldZcount ~= false then
 					setElementData ( owner, "Zombie kills", oldZcount+1  )
 					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )
-					triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )				else
+					triggerClientEvent ( "onZombieCombo", getRootElement())
+					triggerEvent ( "onZombieComboTeam", getRootElement())
+				else
 					setElementData ( owner, "Zombie kills", 1  )
 					triggerEvent ( "onZombieWasted", source, owner, weapon, bodypart )				
-					triggerClientEvent ( "onZombieWasted", source, owner, weapon, bodypart )				end
+					triggerClientEvent ( "onZombieCombo", getRootElement())
+					triggerEvent ( "onZombieComboTeam", getRootElement())
+				end
 			end
 		end
 	end
 end
 addEventHandler("onPedWasted", resourceRoot, deanimated)
+
+addEvent( "onZombieComboTeam", true )
+function comboTeamKill ()
+--outputChatBox("getRootElement = "..getRootElement(), root, r, g, b)
+
+	if ComboTeamKillTimer ~= nil then
+		killTimer(ComboTeamKillTimer)
+		ComboTeamKillTimer = nil
+	end
+	if DisplayComboTeamTimer ~= nil then
+		killTimer(DisplayComboTeamTimer)
+		DisplayComboTeamTimer = nil
+	end
+	ComboTeamKillCount = ComboTeamKillCount + 1
+	DIsplayComboTeamAlpha = 255
+	triggerClientEvent ("teamComboHandler", getRootElement(), ComboTeamKillCount, DIsplayComboTeamAlpha )
+	
+	DisplayComboTeamTimer = setTimer( inDisplayComboTeamKill, 500, 10)
+	ComboTeamKillTimer = setTimer( initializeComboTeamKill, 5000, 1)
+end
+addEventHandler("onZombieComboTeam", getRootElement(), comboTeamKill )
+
+function initializeComboTeamKill( )
+	ComboTeamKillCount = 0
+	triggerClientEvent ("teamComboHandler", getRootElement(), ComboTeamKillCount, DIsplayComboTeamAlpha )
+end
+
+function inDisplayComboTeamKill( )
+	remaining, executesRemaining, totalExecutes = getTimerDetails(DisplayComboTeamTimer)
+	DIsplayComboTeamAlpha = (executesRemaining - 1)*28
+	triggerClientEvent ("teamComboHandler", getRootElement(), ComboTeamKillCount, DIsplayComboTeamAlpha )
+end
 
 --STUFF TO ALLOW PLAYERS TO PLACE BOARDS
 function boarditup( player, key, keyState )
