@@ -307,7 +307,9 @@ function zombiedamaged ( attacker, weapon, bodypart, loss )
 					triggerServerEvent ("headboom", source, source, attacker, weapon, bodypart )
 				end
 			else
-				if (zombieHealth > 0) then
+				if (zombieHealth <= (loss*2)) then
+					killPed ( source, attacker, weapon, bodypart )
+				else
 					setElementHealth ( source, zombieHealth - (loss/2) )
 				end
 			end
