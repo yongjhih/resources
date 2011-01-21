@@ -291,9 +291,10 @@ end
 addEventHandler( "Zomb_Moan", getRootElement(), Zmoan )
 
 --ZOMBIE HEADSHOTS TO ALL BUT HELMETED ZOMBIES
-function zombiedamaged ( attacker, weapon, bodypart )
+function zombiedamaged ( attacker, weapon, bodypart, loss )
 	if getElementType ( source ) == "ped" then
 		if (getElementData (source, "zombie") == true) then
+			local zombieHealth = getElementHealth ( source )
 			if ( bodypart == 9 ) then
 				helmeted = "no"
 				local zskin = getElementModel ( source )
@@ -305,6 +306,8 @@ function zombiedamaged ( attacker, weapon, bodypart )
 				if helmeted == "no" then
 					triggerServerEvent ("headboom", source, source, attacker, weapon, bodypart )
 				end
+			else
+				setElementHealth ( source, zombieHealth - (loss/2) )
 			end
 		end
 	end
