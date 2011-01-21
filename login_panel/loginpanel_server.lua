@@ -106,12 +106,21 @@ addEventHandler("onPlayerLogout",getRootElement(),logoutHandler)
 
 
 
+-- Get the server's name
+function getData()
+	local sName = string.gsub(getServerName()," ","")
+	triggerClientEvent(source,"onGetServerData",getRootElement(),sName)
+end
+
+
 
 
 addEvent("onRequestLogin",true)
 addEvent("onRequestRegister",true)
 addEvent("onRequestAutologin",true)
+addEvent("onClientLoginLoaded",true)
 addEventHandler("onRequestLogin",getRootElement(),loginPlayer)
 addEventHandler("onRequestRegister",getRootElement(),registerPlayer)
 addEventHandler("onRequestAutologin",getRootElement(),autologinPlayer)
+addEventHandler("onClientLoginLoaded",getRootElement(),getData)
 

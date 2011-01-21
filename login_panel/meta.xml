@@ -1,5 +1,5 @@
 <meta>
-	<info author="NeXTreme" name="Login Panel" version="1.0.1" type="script"/>
+	<info author="NeXTreme" name="Login Panel" version="1.0.2" type="script"/>
 	
 	<script src="loginpanel_server.lua" type="server" />
 	<script src="loginpanel_client.lua" type="client" />

@@ -22,20 +22,40 @@ infoText = "------ Rules ------ \n\n* No cheating!\n* No insulting and spamming!
 
 
 
--- Screen and GUI sizes, don't modify
+-- Screen and GUI window sizes
 screenWidth,screenHeight = guiGetScreenSize()
 mainWidth,mainHeight = 749,472
 regWidth,regHeight = 439,344
+
+
+-- Generate the XML file name
+function getServerName()
+	triggerServerEvent("onClientLoginLoaded",getLocalPlayer())
+end
+addEventHandler("onClientResourceStart",getResourceRootElement(getThisResource()),getServerName)
+
+function setXmlFileName(sName)
+	xmlFileName = tostring("login_"..sName..".xml")
+	loginPanel()
+end
+addEvent("onGetServerData",true)
+addEventHandler("onGetServerData",getRootElement(),setXmlFileName)
+
+
+
+
+
+----------------------------------
 
 addEvent("onRequestIncreaseAttempts",true)
 addEvent("onRequestDisplayPanel",true)
 
 function loginPanel()
 		-- Check if autologin is enabled - If yes, then log the player in, else create and show the userpanel
-		local xmlFile = xmlLoadFile("user.xml")
+		local xmlFile = xmlLoadFile(xmlFileName)
 		if xmlFile then
 			status = xmlNodeGetAttribute(xmlFile,"autologin")
-			if (status == tostring(true)) then
+			if (status == "true") then
 				local username = tostring(xmlNodeGetAttribute(xmlFile,"username"))
 				local password = tostring(xmlNodeGetAttribute(xmlFile,"password"))
 				if not (username == "") and not (password == "") then
@@ -136,21 +156,21 @@ function loginPanel()
 			end
 			xmlUnloadFile(xmlFile)
 		else
-			saveXmlFile()
+			xmlFileHandler(true)
 		end
 		addEventHandler("onRequestDisplayPanel",getRootElement(),logoutHandler)
 end
-addEventHandler("onClientResourceStart",getResourceRootElement(getThisResource()),loginPanel)
+--addEventHandler("onClientResourceStart",getResourceRootElement(getThisResource()),loginPanel)
 
 
 
 -- Disable autologin
 function removeAutoLogin()
-    local xmlFile = xmlLoadFile("user.xml")
+    local xmlFile = xmlLoadFile(xmlFileName)
 	if xmlFile then
 		local status = xmlNodeGetAttribute(xmlFile,"autologin")
-		if status == tostring(true) then
-			xmlNodeSetAttribute(xmlFile,"autologin",tostring(false))
+		if status == "true" then
+			xmlNodeSetAttribute(xmlFile,"autologin","false")
 			outputChatBox("#0000FF* #FFFFFFAuto-login is now #FF0000DISABLED#FFFFFF!",255,255,255,true)
 			xmlSaveFile(xmlFile)
 			xmlUnloadFile(xmlFile)
@@ -166,11 +186,11 @@ addCommandHandler("disableauto", removeAutoLogin)
 
 -- Enable autologin
 function addAutoLogin()
-    local xmlFile = xmlLoadFile("user.xml")
+    local xmlFile = xmlLoadFile(xmlFileName)
 	if xmlFile then
 		local status  = xmlNodeGetAttribute(xmlFile,"autologin")
-		if status == tostring(false) then
-			xmlNodeSetAttribute(xmlFile,"autologin",tostring(true))
+		if status == "false" then
+			xmlNodeSetAttribute(xmlFile,"autologin","true")
 			outputChatBox("#0000FF* #FFFFFFAuto-login is now #00FF00ENABLED#FFFFFF! You will be automatically logged in every time you join the server.",255,255,255,true)
 			setTimer(outputChatBox,1000,1,"#0000FF* #FFFFFFTo #FF0000DISABLE#FFFFFF auto-login, use #ABCDEF/disableauto#FFFFFF!",255,255,255,true)
 			xmlSaveFile(xmlFile)
@@ -192,7 +212,7 @@ function onClickLogin(button,state)
 			username = guiGetText(editUsername)
 			password = guiGetText(editPassword)
 			triggerServerEvent("onRequestLogin",getLocalPlayer(),username,password,enableKickPlayer,attemptedLogins,maxLoginAttempts)
-			saveXmlFile()
+			xmlFileHandler()
 		end
 	end
 end
@@ -307,21 +327,28 @@ end
 
 -----------------------------------------------------------------------------------------------|
 
---[ Save the XML file ]--
-function saveXmlFile()
-	local xmlFile = xmlLoadFile("user.xml")
+-- XML File Handler
+function xmlFileHandler(gReturn)
+	local xmlFile = xmlLoadFile(xmlFileName)
 	if not xmlFile then
-		xmlFile = xmlCreateFile("user.xml","settings")
-		xmlNodeSetAttribute(xmlFile,"autologin",tostring(false))
+		xmlFile = xmlCreateFile(xmlFileName,"settings")
+		xmlNodeSetAttribute(xmlFile,"autologin","false")
 	end
 	xmlNodeSetAttribute(xmlFile,"username",tostring(guiGetText(editUsername)))
 	xmlNodeSetAttribute(xmlFile,"password",tostring(guiGetText(editPassword)))
 	xmlSaveFile(xmlFile)
 	xmlUnloadFile(xmlFile)
+	if (gReturn) then
+		if (gReturn == true) then
+			loginPanel()
+		else
+			return
+		end
+	end
 end
 
 
---[ Increase login attempts ]--
+-- Increase Login Attepts
 function increaseAttempts()
 	attemptedLogins = attemptedLogins+1
 end

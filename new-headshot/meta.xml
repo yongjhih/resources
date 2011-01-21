@@ -1,0 +1,6 @@
+<meta>
+	<info author="[GER]Rafael-KP_Lead" type="script" version="1.0.3" />
+	<include resource="killmessages" />
+	<script src="headshot_s.lua" type="server" />
+	<script src="headshot_c.lua" type="client" />
+</meta>

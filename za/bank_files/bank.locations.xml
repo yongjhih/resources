@@ -1,0 +1,6 @@
+<banks>
+	<bank name="Safe Zone Bank" blip="true" depositAllowed="true" >
+		<location posX="2316.62" posY="-15.58" posZ="26.74" ATM="false" ATMRot="0.0" markerSize="1.5" interior="0" />
+	</bank>
+-->
+</banks>
