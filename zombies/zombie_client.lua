@@ -486,7 +486,7 @@ function Spawn_Place(xcoord, ycoord)
 end
 addEventHandler("Spawn_Placement", getRootElement(), Spawn_Place)
 
-addEvent( "onComboShow", true )
+--addEvent( "onComboShow", true )
 function createComboText ()
 	local screenWidth, screenHeight = guiGetScreenSize()
 	local StrComboKillCount = tostring(ComboKillCount).." Combo"
@@ -506,35 +506,39 @@ end
 addEventHandler("onClientRender",getRootElement(), createComboText)
 
 addEvent( "onZombieCombo", true )
-function comboKill ()
---outputChatBox("getRootElement = "..getRootElement(), root, r, g, b)
+function comboKill ( ammo, attacker, weapon, bodypart )
+	local localPlayer = getLocalPlayer()
 
-	if ComboKillTimer ~= nil then
-		killTimer(ComboKillTimer)
-		ComboKillTimer = nil
+	if (localPlayer == attacker) then
+		if ComboKillTimer ~= nil then
+			killTimer(ComboKillTimer)
+			ComboKillTimer = nil
+		end
+
+		if DisplayComboTimer ~= nil then
+			killTimer(DisplayComboTimer)
+			DisplayComboTimer = nil
+		end
+
+		ComboKillCount = ComboKillCount + 1
+		DIsplayComboAlpha = 255
+		triggerEvent ( "onClientRender", createComboText )
+		
+		DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
+		ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 	end
-	if DisplayComboTimer ~= nil then
-		killTimer(DisplayComboTimer)
-		DisplayComboTimer = nil
-	end
-	ComboKillCount = ComboKillCount + 1
-	DIsplayComboAlpha = 255
-	triggerEvent ( "onComboShow", getRootElement() )
-	
-	DisplayComboTimer = setTimer( inDisplayComboKill, 500, 10)
-	ComboKillTimer = setTimer( initializeComboKill, 5000, 1)
 end
-addEventHandler("onZombieCombo", getLocalPlayer(), comboKill )
+addEventHandler("onZombieCombo", getRootElement(), comboKill )
 
 function initializeComboKill( )
 	ComboKillCount = 0
-	triggerEvent ( "onComboShow", getRootElement() )
+	triggerEvent ( "onClientRender", createComboText )
 end
 
 function inDisplayComboKill( )
 	remaining, executesRemaining, totalExecutes = getTimerDetails(DisplayComboTimer)
 	DIsplayComboAlpha = (executesRemaining - 1)*28
-	triggerEvent ( "onComboShow", getRootElement() )
+	triggerEvent ( "onClientRender", createComboText )
 end
 
 --Team Combo below
